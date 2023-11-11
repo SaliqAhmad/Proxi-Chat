@@ -8,18 +8,54 @@ export const getUserSession = async () => {
     if (error) {
         throw error;
     }
-    return data;
+    return data.session;
 };
 
-export const handleUserSignIn = async (email: string, password: string) => {
+export const handleUserSignIn = async (email: string, password: string, userSessionId: string | undefined, latitude: number, longitude: number, e: FormEvent) => {
+    e.preventDefault();
+    if (!email || !password) {
+        toast.error("Please fill in all the fields", {
+            style: {
+                background: "#DCDCDC",
+                opacity: "10",
+                padding: "16px",
+                borderRadius: "3rem",
+            },
+        });
+        return;
+    }
     // Sign in the user.
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
     });
+    const { error: locationError } = await supabase.from("users")
+        .update({ latitude: latitude, longitude: longitude })
+        .match({ id: userSessionId });
+    if (locationError) {
+        toast.error(locationError.message, {
+            style: {
+                background: "#DCDCDC",
+                opacity: "10",
+                padding: "16px",
+                borderRadius: "3rem",
+            },
+        });
+        throw locationError;
+    }
+
     if (error) {
+        toast.error(error.message, {
+            style: {
+                background: "#DCDCDC",
+                opacity: "10",
+                padding: "16px",
+                borderRadius: "3rem",
+            },
+        });
         throw error;
     }
+    if (data.session?.access_token) return true;
 };
 
 export const handleUserSignUp = async (email: string, password: string, fullName: string, latitude: number, longitude: number, e: FormEvent) => {
@@ -42,8 +78,6 @@ export const handleUserSignUp = async (email: string, password: string, fullName
         options: {
             data: {
                 fullName,
-                latitude,
-                longitude,
             },
         },
     });
@@ -58,6 +92,28 @@ export const handleUserSignUp = async (email: string, password: string, fullName
         });
         throw error;
     }
+    const { error: dbSave } = await supabase.from("users")
+        .insert({
+            id: data.user.id,
+            name: fullName,
+            email: email,
+            password: password,
+            latitude: latitude,
+            longitude: longitude,
+        })
+
+    if (dbSave) {
+        toast.error(dbSave.message, {
+            style: {
+                background: "#DCDCDC",
+                opacity: "10",
+                padding: "16px",
+                borderRadius: "3rem",
+            },
+        });
+        throw dbSave;
+    }
+
     if (data.session?.access_token) return true;
 };
 

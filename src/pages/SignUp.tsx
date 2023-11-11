@@ -3,6 +3,7 @@ import { handleUserSignUp } from "../backend/handleUser";
 import { useGeolocated } from "react-geolocated";
 import { Link, useNavigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+import { LocationError } from "./LocationError";
 
 export const SignUp = () => {
     const [fullName, setFullName] = useState<string>('');
@@ -26,13 +27,7 @@ export const SignUp = () => {
 
     if (!isGeolocationEnabled) {
         return (
-            <div className="w-full h-screen flex flex-col items-center justify-center">
-                <img src="/src/assets/Location.svg" alt="..." />
-                <div className="flex flex-col items-center justify-center">
-                    <p className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-600 mt-12">Gelocation is not enabled</p>
-                    <p className="md:text-lg xl:text-xl text-gray-500 mt-6">Please enable geolocation to continue.</p>
-                </div>
-            </div>
+            <LocationError />
         );
     }
 
@@ -63,7 +58,7 @@ export const SignUp = () => {
                 }
                 }
                 >
-                    <h1 className="font-bold text-4xl text-center mb-12">WELCOME TO PROXI-CHAT</h1>
+                    <h1 className="font-bold text-4xl text-center mb-12" style={{ fontFamily: "Audiowide" }}>WELCOME TO PROXI-CHAT</h1>
                     <div className="flex justify-center py-2 px-3">
                         <input type="text" placeholder="Full Name" className="input bg-transparent rounded-full input-bordered input-lg" value={fullName} onChange={(e) => setFullName(e.currentTarget.value)} />
                     </div>
