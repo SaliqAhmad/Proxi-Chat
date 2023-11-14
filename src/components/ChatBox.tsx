@@ -1,6 +1,9 @@
 import { Database } from "../lib/database.types";
 import { Chats } from "../components/Chats";
-import { IconX } from "@tabler/icons-react";
+import { IconSend, IconX } from "@tabler/icons-react";
+import { sendMsgs } from "../backend/sendMsgs";
+import { useEffect, useState } from "react";
+import { useQueryClient, useMutation } from "react-query";
 
 type User = Database["public"]["Tables"]["users"]["Row"];
 
@@ -8,21 +11,49 @@ type Props = {
     user: User;
 }
 
-export const ChatBox = (props: Props) => {
+export const ChatBox = (user: Props) => {
+    const [msg, setMsg] = useState<string>("");
 
-    if (!props) {
-        return null;
+    const queryClient = useQueryClient();
+
+    const { mutate, isSuccess } = useMutation({
+        mutationFn: (msg: string) => sendMsgs(user.user.id, msg),
+        mutationKey: ["sendMsgs"],
+    });
+
+    useEffect(() => {
+        if (isSuccess) {
+            queryClient.invalidateQueries(["chats", user.user.id]);
+            setMsg("");
+        }
     }
+        , [isSuccess, queryClient, user.user.id]);
+
     return (
         <>
             <input type="checkbox" id="my_modal_6" className="modal-toggle" />
             <div className="modal">
-                <div className="modal-box w-11/4 max-w-5xl h-screen bg-gradient-to-t from-[#101619] to-[#202C32]">
+                <div className="card w-1/2 h-screen bg-base-100 shadow-xl">
                     <div className="modal-action">
                         <label htmlFor="my_modal_6" className="btn btn-outline btn-circle"><IconX /></label>
                     </div>
-                    <h3 className="font-bold text-lg text-center">{props.user.name}</h3>
-                    <Chats otherUser={props.user.id} />
+                    <div className="card-body items-center text-center overflow-y-auto">
+                        <h2 className="card-title">{user.user.name}</h2>
+                        <div className="w-full overflow-y-auto">
+                            <Chats user={user.user} />
+                        </div>
+                        <p></p>
+                        <div className="card-actions">
+                            <div className="form-control">
+                                <div className="input-group">
+                                    <input type="text" placeholder="text..." className="input input-lg input-bordered" value={msg} onChange={(e) => setMsg(e.currentTarget.value)} />
+                                    <button className="btn btn-outline btn-square btn-lg" onClick={() => mutate(msg)}>
+                                        <IconSend />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </>
