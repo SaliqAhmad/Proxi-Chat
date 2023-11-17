@@ -11,7 +11,7 @@ export const getUserSession = async () => {
     return data.session;
 };
 
-export const handleUserSignIn = async (email: string, password: string, userSessionId: string | undefined, latitude: number, longitude: number, e: FormEvent) => {
+export const handleUserSignIn = async (email: string, password: string, latitude: number | undefined, longitude: number | undefined, userSessionId: string | undefined, e: FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
         toast.error("Please fill in all the fields", {
@@ -25,10 +25,27 @@ export const handleUserSignIn = async (email: string, password: string, userSess
         return;
     }
     // Sign in the user.
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
     });
+    if (error) {
+        toast.error(error.message, {
+            style: {
+                background: "#DCDCDC",
+                opacity: "10",
+                padding: "16px",
+                borderRadius: "3rem",
+            },
+        });
+        throw error;
+    }
+    return updateUserLocation(latitude, longitude);
+};
+
+const updateUserLocation = async (latitude: number | undefined, longitude: number | undefined) => {
+    const userSessionId = (await supabase.auth.getUser()).data.user?.id;
+    if (!latitude || !longitude || !userSessionId) return;
     const { error: locationError } = await supabase.from("users")
         .update({ latitude: latitude, longitude: longitude })
         .match({ id: userSessionId });
@@ -43,20 +60,8 @@ export const handleUserSignIn = async (email: string, password: string, userSess
         });
         throw locationError;
     }
-
-    if (error) {
-        toast.error(error.message, {
-            style: {
-                background: "#DCDCDC",
-                opacity: "10",
-                padding: "16px",
-                borderRadius: "3rem",
-            },
-        });
-        throw error;
-    }
-    if (data.session?.access_token) return true;
-};
+    return true;
+}
 
 export const handleUserSignUp = async (email: string, password: string, fullName: string, latitude: number, longitude: number, e: FormEvent) => {
     e.preventDefault();
@@ -123,5 +128,6 @@ export const handleUserSignOut = async () => {
     if (error) {
         throw error;
     }
+    return true;
 };
 

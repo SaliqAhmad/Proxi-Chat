@@ -3,7 +3,7 @@ import { getUserSession } from "../backend/handleUser"
 import { IconTrash } from "@tabler/icons-react";
 import { Database } from "../lib/database.types";
 import { getChats } from "../backend/getChats";
-import { delMsgs } from "../backend/sendMsgs";
+import { delMsgs, getMedia } from "../backend/sendMsgs";
 import { useEffect } from "react";
 
 type User = Database["public"]["Tables"]["users"]["Row"];
@@ -26,9 +26,21 @@ export const Chats = (user: Props) => {
     })
 
     const { mutate, isSuccess } = useMutation({
-        mutationFn: (msgid: string) => delMsgs(CurrUser?.user.id, msgid),
+        mutationFn: (msgid: string, isImg: boolean) => delMsgs(msgid, isImg, user.user.id),
         mutationKey: ["delMsgs"],
     });
+
+    type MediaProps = {
+        path: string;
+    }
+
+    const Media = (path: MediaProps) => {
+        const { data: media } = useQuery({
+            queryFn: async () => getMedia(path.path),
+            queryKey: ["img", user.user.id],
+        })
+        return <img src={media} alt="..." />
+    }
 
     useEffect(() => {
         if (isSuccess) {
@@ -42,10 +54,11 @@ export const Chats = (user: Props) => {
             {chats?.map((chat) => (
                 <div key={chat.msgid}>
                     <div className={`chat ${chat.id === CurrUser?.user.id ? "chat-end" : "chat-start"} mt-2`} key={chat.id}>
-                        <div className={`chat-bubble ${chat.id === CurrUser?.user.id ? "chat-bubble-info" : "chat-bubble-success"}`}>{chat.message}</div>
+                        {chat.isImg && <p><Media path={chat.message} /></p>}
+                        {!chat.isImg && <div className={`chat-bubble ${chat.id === CurrUser?.user.id ? "chat-bubble-info" : "chat-bubble-success"}`}>{chat.message}</div>}
                         <div className="avatar">
                             {chat.id === CurrUser?.user.id && (<div className="w-10">
-                                <button className="btn btn-sm btn-circle bg-transparent hover:bg-transparent hover:scale-95 border-0" onClick={async () => mutate(chat.msgid)}>
+                                <button className="btn btn-sm btn-circle bg-transparent hover:bg-transparent hover:scale-95 border-0" onClick={async () => mutate(chat.msgid, chat.isImg)}>
                                     <IconTrash />
                                 </button>
                             </div>)}

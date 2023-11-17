@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { getUserSession, handleUserSignIn } from "../backend/handleUser";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useGeolocated } from "react-geolocated";
-import { useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { LocationError } from "./LocationError";
 
 export const SignIn = () => {
@@ -14,6 +14,7 @@ export const SignIn = () => {
 
   const navigate = useNavigate();
 
+  const queryClient = useQueryClient();
   const { data: userSession } = useQuery('user', getUserSession);
 
   const { coords, isGeolocationAvailable, isGeolocationEnabled } =
@@ -23,6 +24,27 @@ export const SignIn = () => {
       },
       userDecisionTimeout: 5000,
     });
+
+  const { mutate, isSuccess } = useMutation({
+    mutationKey: 'user',
+    mutationFn: (e: FormEvent) => handleUserSignIn(email, password, coords?.latitude, coords?.longitude, userSession?.user.id, e),
+    onSuccess: (res) => {
+      if (res) {
+        setSigning(true);
+        setTimeout(() => {
+          navigate('/chat');
+        }
+          , 1000);
+      }
+    },
+  });
+
+  useEffect(() => {
+    if (isSuccess) {
+      queryClient.invalidateQueries('user');
+    }
+  }
+    , [isSuccess, queryClient]);
 
   if (!isGeolocationAvailable) {
     return (
@@ -44,17 +66,7 @@ export const SignIn = () => {
     <div className="h-screen flex bg-gradient-to-t from-[#202C32] to-[#101619]">
       <Toaster />
       <div className=" w-full flex lg:w-1/2 justify-center items-center">
-        <form onSubmit={(e) => {
-          handleUserSignIn(email, password, userSession?.user.id, coords.latitude, coords.longitude, e).then((res) => {
-            if (res == true) {
-              setSigning(true);
-              setTimeout(() => {
-                navigate('/chat');
-              }
-                , 1000);
-            }
-          });
-        }
+        <form onSubmit={async (e) => { mutate(e) }
         }
         >
           <h1 className="font-bold text-4xl text-center mb-12" style={{ fontFamily: "Audiowide" }}>WELCOME TO PROXI-CHAT</h1>

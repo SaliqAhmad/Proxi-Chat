@@ -1,7 +1,7 @@
 import { Database } from "../lib/database.types";
 import { Chats } from "../components/Chats";
-import { IconSend, IconX } from "@tabler/icons-react";
-import { sendMsgs } from "../backend/sendMsgs";
+import { IconSend, IconX, IconPhoto } from "@tabler/icons-react";
+import { sendMedia, sendMsgs } from "../backend/sendMsgs";
 import { useEffect, useState } from "react";
 import { useQueryClient, useMutation } from "react-query";
 
@@ -21,6 +21,11 @@ export const ChatBox = (user: Props) => {
         mutationKey: ["sendMsgs"],
     });
 
+    const { mutate: sendPhoto } = useMutation({
+        mutationFn: (msg: File) => sendMedia(user.user.id, msg),
+        mutationKey: ["sendMedia"],
+    });
+
     useEffect(() => {
         if (isSuccess) {
             queryClient.invalidateQueries(["chats", user.user.id]);
@@ -33,7 +38,7 @@ export const ChatBox = (user: Props) => {
         <>
             <input type="checkbox" id="my_modal_6" className="modal-toggle" />
             <div className="modal">
-                <div className="card w-1/2 h-screen bg-base-100 shadow-xl">
+                <div className="card w-screen lg:w-1/2 h-screen bg-base-100 shadow-xl">
                     <div className="modal-action">
                         <label htmlFor="my_modal_6" className="btn btn-outline btn-circle"><IconX /></label>
                     </div>
@@ -49,6 +54,10 @@ export const ChatBox = (user: Props) => {
                                     <input type="text" placeholder="text..." className="input input-lg input-bordered" value={msg} onChange={(e) => setMsg(e.currentTarget.value)} />
                                     <button className="btn btn-outline btn-square btn-lg" onClick={() => mutate(msg)}>
                                         <IconSend />
+                                    </button>
+                                    <button className="btn btn-outline btn-square btn-lg" >
+                                        <input type="file" accept="images/*" className="opacity-0 absolute btn-square" onChange={async (e) => sendPhoto(e.target.files[0])} />
+                                        <IconPhoto />
                                     </button>
                                 </div>
                             </div>

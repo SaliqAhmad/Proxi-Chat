@@ -6,6 +6,7 @@ import { IconMessage } from "@tabler/icons-react";
 import { ChatBox } from "../components/ChatBox";
 import { useState } from "react";
 import { Database } from "../lib/database.types";
+import { TopBar } from "../components/TopBar";
 
 type User = Database["public"]["Tables"]["users"]["Row"];
 
@@ -30,6 +31,7 @@ export const Chat = () => {
     }
     return (
         <>
+            <TopBar userSession={userSession} />
             <div className="bg-gradient-to-t from-[#202C32] to-[#101619] min-h-screen flex items-center justify-center px-16">
                 <div className="relative w-full max-w-lg border border-gray-50/10 rounded">
                     <div className="m-8 relative space-y-4">
