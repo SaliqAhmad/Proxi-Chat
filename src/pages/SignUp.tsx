@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { handleUserSignUp } from "../backend/handleUser";
 import { useGeolocated } from "react-geolocated";
 import { Link, useNavigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { LocationError } from "./LocationError";
+import { useMutation } from "react-query";
 
 export const SignUp = () => {
     const [fullName, setFullName] = useState<string>('');
@@ -20,6 +21,20 @@ export const SignUp = () => {
             },
             userDecisionTimeout: 5000,
         });
+
+    const { mutate } = useMutation({
+        mutationKey: "handleUserSignUp",
+        mutationFn: (e: FormEvent) => handleUserSignUp(email, password, fullName, coords?.latitude, coords?.longitude, e),
+        onSuccess: (res) => {
+            if (res) {
+                setSigning(true);
+                setTimeout(() => {
+                    navigate('/signin');
+                }
+                    , 1000);
+            }
+        }
+    });
 
     if (!isGeolocationAvailable) {
         return <div>Your browser does not support Geolocation</div>;
@@ -45,19 +60,7 @@ export const SignUp = () => {
                 </div>
             </div>
             <div className=" w-full flex lg:w-1/2 justify-center items-center">
-                <form onSubmit={(e) => {
-                    handleUserSignUp(email, password, fullName, coords.latitude, coords.longitude, e).then((res) => {
-                        if (res == true) {
-                            setSigning(true);
-                            setTimeout(() => {
-                                navigate('/signin');
-                            }
-                                , 1000);
-                        }
-                    });
-                }
-                }
-                >
+                <form onSubmit={(e) => mutate(e)}>
                     <h1 className="font-bold text-4xl text-center mb-12" style={{ fontFamily: "Audiowide" }}>WELCOME TO PROXI-CHAT</h1>
                     <div className="flex justify-center py-2 px-3">
                         <input type="text" placeholder="Full Name" className="input bg-transparent rounded-full input-bordered input-lg" value={fullName} onChange={(e) => setFullName(e.currentTarget.value)} />

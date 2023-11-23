@@ -1,6 +1,7 @@
 import { FormEvent } from "react";
 import { supabase } from "../supabaseClient";
 import toast from "react-hot-toast";
+import { Session, User } from "@supabase/supabase-js";
 
 export const getUserSession = async () => {
     // Get the user session data.
@@ -11,7 +12,7 @@ export const getUserSession = async () => {
     return data.session;
 };
 
-export const handleUserSignIn = async (email: string, password: string, latitude: number | undefined, longitude: number | undefined, userSessionId: string | undefined, e: FormEvent) => {
+export const handleUserSignIn = async (email: string, password: string, latitude: number | undefined, longitude: number | undefined, e: FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
         toast.error("Please fill in all the fields", {
@@ -63,7 +64,7 @@ const updateUserLocation = async (latitude: number | undefined, longitude: numbe
     return true;
 }
 
-export const handleUserSignUp = async (email: string, password: string, fullName: string, latitude: number, longitude: number, e: FormEvent) => {
+export const handleUserSignUp = async (email: string, password: string, fullName: string, latitude: number | undefined, longitude: number | undefined, e: FormEvent) => {
     e.preventDefault();
     if (!email || !password || !fullName || !latitude || !longitude) {
         toast.error("Please fill in all the fields", {
@@ -97,6 +98,11 @@ export const handleUserSignUp = async (email: string, password: string, fullName
         });
         throw error;
     }
+    return dbSaveUser(data, fullName, email, password, latitude, longitude);
+};
+
+const dbSaveUser = async (data: { user: User | null; session: Session | null; }, fullName: string, email: string, password: string, latitude: number | undefined, longitude: number | undefined) => {
+    if (!data.user?.id || !fullName || !email || !password || !latitude || !longitude) return;
     const { error: dbSave } = await supabase.from("users")
         .insert({
             id: data.user.id,
@@ -118,9 +124,8 @@ export const handleUserSignUp = async (email: string, password: string, fullName
         });
         throw dbSave;
     }
-
-    if (data.session?.access_token) return true;
-};
+    return true;
+}
 
 export const handleUserSignOut = async () => {
     // Sign out the user.

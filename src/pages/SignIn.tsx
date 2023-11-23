@@ -1,10 +1,10 @@
 import { FormEvent, useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
-import { getUserSession, handleUserSignIn } from "../backend/handleUser";
+import { handleUserSignIn } from "../backend/handleUser";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useGeolocated } from "react-geolocated";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { LocationError } from "./LocationError";
 
 export const SignIn = () => {
@@ -15,7 +15,6 @@ export const SignIn = () => {
   const navigate = useNavigate();
 
   const queryClient = useQueryClient();
-  const { data: userSession } = useQuery('user', getUserSession);
 
   const { coords, isGeolocationAvailable, isGeolocationEnabled } =
     useGeolocated({
@@ -27,7 +26,7 @@ export const SignIn = () => {
 
   const { mutate, isSuccess } = useMutation({
     mutationKey: 'user',
-    mutationFn: (e: FormEvent) => handleUserSignIn(email, password, coords?.latitude, coords?.longitude, userSession?.user.id, e),
+    mutationFn: (e: FormEvent) => handleUserSignIn(email, password, coords?.latitude, coords?.longitude, e),
     onSuccess: (res) => {
       if (res) {
         setSigning(true);

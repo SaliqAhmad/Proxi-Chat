@@ -7,6 +7,7 @@ import { SignUp } from './pages/SignUp.tsx'
 import { SignIn } from './pages/SignIn.tsx'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { Chat } from './pages/Chat.tsx'
+import { Groupchat } from './pages/Groupchat.tsx'
 
 const router = createBrowserRouter([
   {
@@ -20,7 +21,11 @@ const router = createBrowserRouter([
   {
     path: '/chat',
     element: <Chat />,
-  }
+  },
+  {
+    path: '/groupchat',
+    element: <Groupchat />,
+  },
 ]);
 
 const queryClient = new QueryClient();

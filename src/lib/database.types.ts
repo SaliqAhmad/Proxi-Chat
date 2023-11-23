@@ -69,13 +69,6 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "groupmembers_groupid_fkey"
-            columns: ["groupid"]
-            isOneToOne: false
-            referencedRelation: "groups"
-            referencedColumns: ["groupid"]
-          },
-          {
             foreignKeyName: "groupmembers_userid_fkey"
             columns: ["userid"]
             isOneToOne: true
@@ -111,13 +104,6 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "groupmessages_groupid_fkey"
-            columns: ["groupid"]
-            isOneToOne: false
-            referencedRelation: "groups"
-            referencedColumns: ["groupid"]
-          },
-          {
             foreignKeyName: "groupmessages_sender_fkey"
             columns: ["sender"]
             isOneToOne: false
@@ -129,19 +115,16 @@ export interface Database {
       groups: {
         Row: {
           groupadmin: string
-          groupid: string
           groupname: string
           id: string
         }
         Insert: {
           groupadmin: string
-          groupid?: string
           groupname: string
           id?: string
         }
         Update: {
           groupadmin?: string
-          groupid?: string
           groupname?: string
           id?: string
         }

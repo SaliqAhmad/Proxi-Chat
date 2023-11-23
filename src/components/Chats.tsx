@@ -25,8 +25,10 @@ export const Chats = (user: Props) => {
         queryKey: ["chats", user.user.id],
     })
 
+    type DelMsgsProps = Database["public"]["Tables"]["chats"]["Row"];
+
     const { mutate, isSuccess } = useMutation({
-        mutationFn: (msgid: string, isImg: boolean) => delMsgs(msgid, isImg, user.user.id),
+        mutationFn: (props: DelMsgsProps) => delMsgs(props.msgid, props.message, props.isImg),
         mutationKey: ["delMsgs"],
     });
 
@@ -58,7 +60,7 @@ export const Chats = (user: Props) => {
                         {!chat.isImg && <div className={`chat-bubble ${chat.id === CurrUser?.user.id ? "chat-bubble-info" : "chat-bubble-success"}`}>{chat.message}</div>}
                         <div className="avatar">
                             {chat.id === CurrUser?.user.id && (<div className="w-10">
-                                <button className="btn btn-sm btn-circle bg-transparent hover:bg-transparent hover:scale-95 border-0" onClick={async () => mutate(chat.msgid, chat.isImg)}>
+                                <button className="btn btn-sm btn-circle bg-transparent hover:bg-transparent hover:scale-95 border-0" onClick={() => mutate(chat)}>
                                     <IconTrash />
                                 </button>
                             </div>)}

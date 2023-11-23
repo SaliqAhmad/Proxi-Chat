@@ -27,7 +27,7 @@ export const Chat = () => {
         return <UnauthorizaError />;
     }
     if (isError && !usersOnLocation) {
-        return <p>Reload Again</p>;
+        return <div className="h-screen bg-gradient-to-t from-[#202C32] to-[#101619] flex mx-auto justify-center"><span className="loading loading-dots loading-lg"></span></div>;
     }
     return (
         <>

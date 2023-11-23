@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 export const sendMsgs = async (receiverId: string, msg: string, isImg = false) => {
     const senderId = (await supabase.auth.getUser()).data.user?.id;
     if (!senderId) return;
+    if (msg === "") return;
     const { error } = await supabase
         .from("chats")
         .insert({
@@ -22,14 +23,14 @@ export const sendMsgs = async (receiverId: string, msg: string, isImg = false) =
     }
 };
 
-export const delMsgs = async (msgId: string, isImg: boolean, receiverId: string) => {
+export const delMsgs = async (msgId: string, msg: string, isImg: boolean) => {
     const currUserId = (await supabase.auth.getUser()).data.user?.id;
     if (!currUserId) return;
     if (isImg) {
         const { error } = await supabase
             .storage
             .from("media")
-            .remove([`/${currUserId}/${receiverId}/${msgId}`]);
+            .remove(["/" + msg]);
         if (error) {
             return toast.error("Error deleting message");
         }
@@ -43,8 +44,10 @@ export const delMsgs = async (msgId: string, isImg: boolean, receiverId: string)
     }
 }
 
-export const sendMedia = async (receiverId: string, file: File) => {
+export const sendMedia = async (receiverId: string, fileList: FileList | null) => {
     const senderId = (await supabase.auth.getUser()).data.user?.id;
+    const file = fileList?.item(0);
+    if (!file) return;
     if (!senderId) return;
     if (file === null) return;
     const { data, error } = await supabase
