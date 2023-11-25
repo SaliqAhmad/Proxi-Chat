@@ -15,11 +15,25 @@ export const sendMsgs = async (receiverId: string, msg: string, isImg = false) =
             isImg: isImg,
         });
     if (error) {
-        console.log(error);
-    }
-
-    if (error) {
         toast.error("Error sending message");
+    }
+    const { data } = await supabase
+        .from("Recent_chats")
+        .select("id")
+        .eq("chat_from", senderId)
+        .or(`chat_from.eq.${receiverId}`)
+
+    if (data?.length === 0) {
+        const { error: error1 } = await supabase
+            .from("Recent_chats")
+            .insert({
+                chat_from: senderId,
+                chat_to: receiverId,
+            });
+        if (error1) {
+            toast.error("Error sending message");
+        }
+        return;
     }
 };
 

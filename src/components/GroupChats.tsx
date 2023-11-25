@@ -19,7 +19,7 @@ export const GroupChats = (props: Props) => {
         queryKey: "user",
     })
 
-    const { data: chats } = useQuery({
+    const { data: chats, isFetching: chatsLoading } = useQuery({
         queryFn: () => getGroupChats(props.group?.id),
         queryKey: ["groupChats", props.group?.id],
     })
@@ -38,7 +38,7 @@ export const GroupChats = (props: Props) => {
             queryFn: async () => getGroupMedia(path.path),
             queryKey: ["groupimg", props.group?.id],
         })
-        return <img src={media} alt="..." />
+        return <img src={media} className="w-[650px] rounded-xl" alt="..." />
     }
 
     useEffect(() => {
@@ -52,15 +52,21 @@ export const GroupChats = (props: Props) => {
             {chats?.map((chat) => (
                 <div key={chat.id}>
                     <div className={`chat ${chat.sender === CurrUser?.user.id ? "chat-end" : "chat-start"} mt-2`} key={chat.id}>
-                        {chat.isImg && <p><Media path={chat.message} /></p>}
-                        {!chat.isImg && <div className={`chat-bubble ${chat.sender === CurrUser?.user.id ? "chat-bubble-info" : "chat-bubble-success"}`}>{chat.message}</div>}
-                        <div className="avatar">
-                            {chat.sender === CurrUser?.user.id && (<div className="w-10">
-                                <button className="btn btn-sm btn-circle bg-transparent hover:bg-transparent hover:scale-95 border-0" onClick={() => mutate(chat.id)}>
-                                    <IconTrash />
-                                </button>
-                            </div>)}
-                        </div>
+                        {chatsLoading ? <span className="loading loading-dots loading-md"></span> : <>
+                            {chat.isImg && <p><Media path={chat.message} /></p>}
+                            {!chat.isImg && <div className={`chat-bubble ${chat.sender === CurrUser?.user.id ? "chat-bubble-info" : "chat-bubble-success"}`}>{chat.message}</div>}
+                            {chat.sender !== CurrUser?.user.id && <div className="chat-footer mt-2 opacity-50">
+                                {chat.sendername}
+                            </div>}
+                            <div className="avatar">
+                                {chat.sender === CurrUser?.user.id && (<div className="w-10">
+                                    <button className="btn btn-sm btn-circle bg-transparent hover:bg-transparent hover:scale-95 border-0" onClick={() => mutate(chat.id)}>
+                                        <IconTrash />
+                                    </button>
+                                </div>)}
+                            </div>
+                        </>
+                        }
                     </div>
                 </div>
             ))}

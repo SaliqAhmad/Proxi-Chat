@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { GroupChatBox } from "../components/GroupChatBox";
 import { Database } from "../lib/database.types";
+import { UnauthorizaError } from "./UnauthorizaError";
 
 type Group = Database["public"]["Tables"]["groups"]["Row"];
 
@@ -20,6 +21,7 @@ export const Groupchat = () => {
         queryFn: getUserSession,
         queryKey: ["userSession"],
     });
+
     const { data: groups, isLoading } = useQuery({
         queryFn: getAllGroups,
         queryKey: ["getGroups"],
@@ -48,7 +50,7 @@ export const Groupchat = () => {
     }, [isSuccess, queryClient, delgrp]);
 
     if (!userSession) {
-        return null;
+        return <UnauthorizaError />
     }
     return (
         <>
@@ -59,7 +61,7 @@ export const Groupchat = () => {
                     {isLoading && <span className="loading loading-dots loading-lg flex mx-auto"></span>}
                     {groups?.map((group) => (
                         <div key={group.id} className="p-5 bg-transparent rounded-lg flex items-center justify-between space-x-8">
-                            <div className="flex-1 flex h-10 justify-between items-center">
+                            <div className="flex-1 flex h-10 justify-between items-center hover:cursor-pointer">
                                 <label htmlFor="my_modal_7" className="h-4 w-48 text-lg capitalize rounded" onClick={() => setGroup(group)}>{group.groupname}</label>
                                 {userSession.user.id === group.groupadmin && <button className="btn btn-circle btn-outline" onClick={async () => delgroup(group.id)}><IconTrash /></button>}
                                 {userSession.user.id !== group.groupadmin && <button className="btn btn-circle btn-outline" onClick={async () => joingroup(group.id)}><IconArrowsJoin2 /></button>}

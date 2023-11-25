@@ -20,7 +20,7 @@ export const Chats = (user: Props) => {
         queryKey: "user",
     })
 
-    const { data: chats } = useQuery({
+    const { data: chats, isFetching: chatsLoading } = useQuery({
         queryFn: async () => getChats(user.user.id),
         queryKey: ["chats", user.user.id],
     })
@@ -56,15 +56,17 @@ export const Chats = (user: Props) => {
             {chats?.map((chat) => (
                 <div key={chat.msgid}>
                     <div className={`chat ${chat.id === CurrUser?.user.id ? "chat-end" : "chat-start"} mt-2`} key={chat.id}>
-                        {chat.isImg && <p><Media path={chat.message} /></p>}
-                        {!chat.isImg && <div className={`chat-bubble ${chat.id === CurrUser?.user.id ? "chat-bubble-info" : "chat-bubble-success"}`}>{chat.message}</div>}
-                        <div className="avatar">
-                            {chat.id === CurrUser?.user.id && (<div className="w-10">
-                                <button className="btn btn-sm btn-circle bg-transparent hover:bg-transparent hover:scale-95 border-0" onClick={() => mutate(chat)}>
-                                    <IconTrash />
-                                </button>
-                            </div>)}
-                        </div>
+                        {chatsLoading ? <span className="loading loading-dots loading-md"></span> : <>
+                            {chat.isImg && <p><Media path={chat.message} /></p>}
+                            {!chat.isImg && <div className={`chat-bubble ${chat.id === CurrUser?.user.id ? "chat-bubble-info" : "chat-bubble-success"}`}>{chat.message}</div>}
+                            <div className="avatar">
+                                {chat.id === CurrUser?.user.id && (<div className="w-10">
+                                    <button className="btn btn-sm btn-circle bg-transparent hover:bg-transparent hover:scale-95 border-0" onClick={() => mutate(chat)}>
+                                        <IconTrash />
+                                    </button>
+                                </div>)}
+                            </div>
+                        </>}
                     </div>
                 </div>
             ))}

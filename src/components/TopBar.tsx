@@ -1,7 +1,7 @@
 import { Session } from "@supabase/supabase-js"
 import { handleUserSignOut } from "../backend/handleUser"
 import { useMutation } from "react-query"
-import { Link, useNavigate } from "react-router-dom"
+import { NavLink, useNavigate } from "react-router-dom"
 
 type Props = {
     userSession: Session
@@ -22,11 +22,11 @@ export const TopBar = (props: Props) => {
             {props && (
                 <div className="navbar fixed mt-10">
                     <div className="w-full justify-center">
-                        <Link to="/chat" className="btn btn-ghost text-xl">CHAT</Link>
-                        <Link to="/groupchat" className="btn btn-ghost text-xl">GROUP CHAT</Link>
-                        <Link to="/mychats" className="btn btn-ghost text-xl">MY CHATS</Link>
+                        <NavLink to="/chat" className="btn btn-ghost text-xl">CHAT</NavLink>
+                        <NavLink to="/groupchat" className="btn btn-ghost text-xl">GROUP CHAT</NavLink>
+                        <NavLink to="/mychats" className="btn btn-ghost text-xl">MY CHATS</NavLink>
                     </div>
-                    <button className="btn btn-ghost text-xl" onClick={() => mutate()}>LOG-OUT</button>
+                    <button className="btn btn-ghost text-xl" onClick={() => mutate()}>LOG-OUT<div className="badge badge-outline">{props.userSession.user.user_metadata.name}</div></button>
                 </div>
             )}
         </>
