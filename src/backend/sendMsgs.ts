@@ -19,9 +19,8 @@ export const sendMsgs = async (receiverId: string, msg: string, isImg = false) =
     }
     const { data } = await supabase
         .from("Recent_chats")
-        .select("id")
-        .eq("chat_from", senderId)
-        .or(`chat_from.eq.${receiverId}`)
+        .select("*")
+        .match({ chat_from: senderId, chat_to: receiverId });
 
     if (data?.length === 0) {
         const { error: error1 } = await supabase

@@ -47,7 +47,7 @@ export const SignUp = () => {
     }
 
     if (!coords) {
-        return <div>Getting the location data&hellip; </div>;
+        return <div className="w-screen h-screen flex justify-center"><span className="loading loading-ball loading-lg"></span></div>;
     }
 
     return (
@@ -72,7 +72,7 @@ export const SignUp = () => {
                         <input type="password" placeholder="Password" className="input bg-transparent rounded-full input-bordered input-lg" value={password} onChange={(e) => setPassword(e.currentTarget.value)} />
                     </div>
                     <div className="flex py-2 px-3 justify-center">
-                        <button type="submit" className="w-40 btn btn-outline btn-lg rounded-full mt-4 mb-2">{signing ? <span className="loading loading-dots loading-lg"></span> : "SIGN UP"}</button>
+                        <button type="submit" className={`w-40 btn btn-outline ${signing && "btn-disabled"} btn-lg rounded-full mt-4 mb-2`}>{signing ? <span className="loading loading-dots loading-lg"></span> : "SIGN UP"}</button>
                     </div>
                     <div className="flex justify-center py-2 px-3">
                         <p className="text-gray-500">Already have an account? <Link to="/signin" className="text-blue-500">Sign In</Link></p>

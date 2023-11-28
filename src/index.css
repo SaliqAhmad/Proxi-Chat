@@ -3,5 +3,9 @@
 @tailwind utilities;
 
 .active {
-    background: linear-gradient(180deg, #202C32, #101619);
+    /* background: linear-gradient(180deg, #202C32, #101619); */
+    border: 0px solid #202C32;
+    border-bottom: 5px solid #202C32;
+    border-style: ridge;
+    border-radius: 0% 
 }

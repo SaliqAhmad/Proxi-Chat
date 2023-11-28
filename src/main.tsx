@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import { Chat } from './pages/Chat.tsx'
 import { Groupchat } from './pages/Groupchat.tsx'
 import { MyChats } from './pages/MyChats.tsx'
+import { TopBar } from './components/TopBar.tsx'
 
 const router = createBrowserRouter([
   {
@@ -21,15 +22,24 @@ const router = createBrowserRouter([
   },
   {
     path: '/chat',
-    element: <Chat />,
+    element: <>
+      <TopBar />
+      <Chat />
+    </>,
   },
   {
     path: '/groupchat',
-    element: <Groupchat />,
+    element: <>
+      <TopBar />
+      <Groupchat />
+    </>,
   },
   {
     path: '/mychats',
-    element: <MyChats />,
+    element: <>
+      <TopBar />
+      <MyChats />
+    </>,
   }
 ]);
 

@@ -89,3 +89,21 @@ export const joinGroup = async (groupId: string) => {
     toast.success("You have joined the group");
     return data;
 }
+
+export const leaveGroup = async (groupId: string) => {
+    const userId = (await supabase.auth.getUser()).data.user?.id;
+    if (!userId) {
+        toast.error("You need to be logged in to leave a group");
+        return;
+    }
+    const { error } = await supabase
+        .from("groupmembers")
+        .delete()
+        .match({ userid: userId, groupid: groupId });
+    if (error) {
+        toast.error(error.message);
+        return;
+    }
+    toast.success("You have left the group");
+    return;
+}

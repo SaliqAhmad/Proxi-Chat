@@ -1,8 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { getUserSession } from "../backend/handleUser";
-import { TopBar } from "../components/TopBar";
-import { IconPlus, IconTrash, IconArrowsJoin2 } from "@tabler/icons-react";
-import { createGroup, delGroup, getAllGroups, joinGroup } from "../backend/handlegroup";
+import { IconPlus, IconTrash, IconArrowsJoin2, IconDoorExit } from "@tabler/icons-react";
+import { createGroup, delGroup, getAllGroups, joinGroup, leaveGroup } from "../backend/handlegroup";
 import { useEffect, useState } from "react";
 import { Toaster } from "react-hot-toast";
 import { GroupChatBox } from "../components/GroupChatBox";
@@ -39,6 +38,10 @@ export const Groupchat = () => {
         mutationKey: "joingroup",
         mutationFn: async (id: string) => joinGroup(id),
     })
+    const { mutate: leavegroup } = useMutation({
+        mutationKey: "leavegroup",
+        mutationFn: async (id: string) => leaveGroup(id),
+    })
     useEffect(() => {
         if (isSuccess) {
             queryClient.invalidateQueries("getGroups");
@@ -49,22 +52,25 @@ export const Groupchat = () => {
         }
     }, [isSuccess, queryClient, delgrp]);
 
+    if (isLoading) {
+        return <div className="h-screen bg-gradient-to-t from-[#202C32] to-[#101619] flex mx-auto justify-center"><span className="loading loading-dots loading-lg"></span></div>
+    }
+
     if (!userSession) {
         return <UnauthorizaError />
     }
     return (
         <>
-            <TopBar userSession={userSession} />
             <Toaster />
             <div className="bg-gradient-to-t from-[#202C32] to-[#101619] min-h-screen flex items-center justify-center px-16">
                 <div className="relative w-full max-w-lg border border-gray-50/10 rounded">
-                    {isLoading && <span className="loading loading-dots loading-lg flex mx-auto"></span>}
                     {groups?.map((group) => (
                         <div key={group.id} className="p-5 bg-transparent rounded-lg flex items-center justify-between space-x-8">
                             <div className="flex-1 flex h-10 justify-between items-center hover:cursor-pointer">
                                 <label htmlFor="my_modal_7" className="h-4 w-48 text-lg capitalize rounded" onClick={() => setGroup(group)}>{group.groupname}</label>
                                 {userSession.user.id === group.groupadmin && <button className="btn btn-circle btn-outline" onClick={async () => delgroup(group.id)}><IconTrash /></button>}
                                 {userSession.user.id !== group.groupadmin && <button className="btn btn-circle btn-outline" onClick={async () => joingroup(group.id)}><IconArrowsJoin2 /></button>}
+                                {userSession.user.id !== group.groupadmin && <button className="btn btn-circle btn-outline" onClick={async () => leavegroup(group.id)}><IconDoorExit /></button>}
                             </div>
                         </div>
                     ))}

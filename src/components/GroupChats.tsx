@@ -19,7 +19,7 @@ export const GroupChats = (props: Props) => {
         queryKey: "user",
     })
 
-    const { data: chats, isFetching: chatsLoading } = useQuery({
+    const { data: chats, isLoading: chatsLoading } = useQuery({
         queryFn: () => getGroupChats(props.group?.id),
         queryKey: ["groupChats", props.group?.id],
     })

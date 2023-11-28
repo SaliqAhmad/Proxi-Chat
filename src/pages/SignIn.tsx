@@ -76,7 +76,7 @@ export const SignIn = () => {
             <input type="password" placeholder="Password" className="input bg-transparent rounded-full input-bordered input-lg" value={password} onChange={(e) => setPassword(e.currentTarget.value)} />
           </div>
           <div className="flex py-2 px-3 justify-center">
-            <button type="submit" className="w-40 btn btn-outline btn-lg rounded-full mt-4 mb-2">{signing ? <span className="loading loading-dots loading-lg"></span> : "SIGN IN"}</button>
+            <button type="submit" className={`w-40 btn ${signing && "btn-disabled"} btn-outline btn-lg rounded-full mt-4 mb-2`}>{signing ? <span className="loading loading-dots loading-lg"></span> : "SIGN IN"}</button>
           </div>
           <div className="flex justify-center py-2 px-3">
             <p className="text-gray-500">Don't have an account? <Link to="/" className="text-blue-500">Sign Up</Link></p>

@@ -20,7 +20,7 @@ export const Chats = (user: Props) => {
         queryKey: "user",
     })
 
-    const { data: chats, isFetching: chatsLoading } = useQuery({
+    const { data: chats, isLoading: chatsLoading } = useQuery({
         queryFn: async () => getChats(user.user.id),
         queryKey: ["chats", user.user.id],
     })

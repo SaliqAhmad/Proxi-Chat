@@ -1,6 +1,5 @@
 import { useQuery } from "react-query"
 import { getRecentChats } from "../backend/recentChats"
-import { TopBar } from "../components/TopBar"
 import { getUserSession } from "../backend/handleUser";
 import { IconMessage } from "@tabler/icons-react";
 import { useState } from "react";
@@ -28,7 +27,6 @@ export const MyChats = () => {
     }
     return (
         <>
-            <TopBar userSession={userSession} />
             <div className="bg-gradient-to-t from-[#202C32] to-[#101619] min-h-screen flex items-center justify-center px-16">
                 <div className="relative w-full max-w-lg border border-gray-50/10 rounded">
                     <div className="m-8 relative space-y-4">

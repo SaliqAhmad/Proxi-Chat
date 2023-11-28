@@ -24,6 +24,14 @@ export const sendGroupChat = async (groupId: string | undefined, message: string
     if (!groupId) {
         throw new Error("groupId is undefined");
     }
+    const { data: isPresent, error: groupError } = await supabase
+        .from("groupmembers")
+        .select("*")
+        .match({ groupid: groupId, userid: currUser.user.id });
+    if (groupError) throw groupError;
+    if (isPresent.length === 0) {
+        throw new Error("User not present in group");
+    }
     const { data, error } = await supabase
         .from("groupmessages")
         .insert(
