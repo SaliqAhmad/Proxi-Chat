@@ -7,8 +7,7 @@ export const getGroupChats = async (groupId: string | undefined) => {
     const { data, error } = await supabase
         .from("groupmessages")
         .select("*")
-        .eq("groupid", groupId);
-
+        .eq("groupid", groupId)
     if (error) {
         throw error;
     }
@@ -30,7 +29,8 @@ export const sendGroupChat = async (groupId: string | undefined, message: string
         .match({ groupid: groupId, userid: currUser.user.id });
     if (groupError) throw groupError;
     if (isPresent.length === 0) {
-        throw new Error("User not present in group");
+        toast.error("You are not a member of this group");
+        return;
     }
     const { data, error } = await supabase
         .from("groupmessages")
@@ -86,4 +86,19 @@ export const sendGroupMedia = async (groupId: string | undefined, fileList: File
 export const getGroupMedia = (path: string) => {
     const { data } = supabase.storage.from("groupmedia").getPublicUrl(path);
     return data.publicUrl;
+}
+
+export const checkIfGroupMember = async (groupId: string | undefined) => {
+    const currUser = (await supabase.auth.getUser()).data;
+    if (!currUser.user) return;
+    if (!groupId) return;
+    const { data: isPresent, error: groupError } = await supabase
+        .from("groupmembers")
+        .select("*")
+        .match({ groupid: groupId, userid: currUser.user.id });
+    if (groupError) throw groupError;
+    if (isPresent.length === 0) {
+        return false;
+    }
+    return true;
 }

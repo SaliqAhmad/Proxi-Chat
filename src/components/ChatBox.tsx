@@ -38,7 +38,7 @@ export const ChatBox = (user: Props) => {
         <>
             <input type="checkbox" id="my_modal_6" className="modal-toggle" />
             <div className="modal">
-                <div className="card w-screen lg:w-1/2 h-screen bg-base-100 shadow-xl">
+                <div className="card w-screen lg:w-1/2 h-screen bg-base-100/70 backdrop-blur-xl shadow-xl">
                     <div className="modal-action">
                         <label htmlFor="my_modal_6" className="btn btn-outline btn-circle"><IconX /></label>
                     </div>

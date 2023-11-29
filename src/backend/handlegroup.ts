@@ -43,7 +43,8 @@ export const getAllGroups = async () => {
     return data;
 }
 
-export const delGroup = async (groupId: string) => {
+export const delGroup = async (groupId: string | undefined) => {
+    if (!groupId) return;
     const groupadmin = (await supabase.auth.getUser()).data.user?.id;
     if (!groupadmin) {
         toast.error("You need to be logged in to delete a group");
@@ -90,7 +91,8 @@ export const joinGroup = async (groupId: string) => {
     return data;
 }
 
-export const leaveGroup = async (groupId: string) => {
+export const leaveGroup = async (groupId: string | undefined) => {
+    if (!groupId) return;
     const userId = (await supabase.auth.getUser()).data.user?.id;
     if (!userId) {
         toast.error("You need to be logged in to leave a group");
