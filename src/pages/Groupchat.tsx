@@ -7,6 +7,8 @@ import { Toaster } from "react-hot-toast";
 import { GroupChatBox } from "../components/GroupChatBox";
 import { Database } from "../lib/database.types";
 import { UnauthorizaError } from "./UnauthorizaError";
+import { TopBar } from "../components/TopBar";
+import { Loading } from "../components/Loading";
 
 type Group = Database["public"]["Tables"]["groups"]["Row"];
 
@@ -49,7 +51,7 @@ export const Groupchat = () => {
     }, [isSuccess, queryClient, joinSuccess]);
 
     if (isLoading) {
-        return <div className="h-screen bg-gradient-to-t from-[#202C32] to-[#101619] flex mx-auto justify-center"><span className="loading loading-dots loading-lg"></span></div>
+        return <Loading />
     }
 
     if (!userSession) {
@@ -58,7 +60,8 @@ export const Groupchat = () => {
     return (
         <>
             <Toaster />
-            <div className="bg-gradient-to-t from-[#202C32] to-[#101619] min-h-screen flex items-center justify-center px-16">
+            <TopBar />
+            <div className="min-h-screen flex items-center justify-center px-16">
                 <div className="relative w-full max-w-lg border border-gray-50/10 rounded">
                     {groups?.map((group) => (
                         <div key={group.id} className="p-5 bg-transparent rounded-lg flex items-center justify-between space-x-8">

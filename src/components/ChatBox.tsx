@@ -38,28 +38,25 @@ export const ChatBox = (user: Props) => {
         <>
             <input type="checkbox" id="my_modal_6" className="modal-toggle" />
             <div className="modal">
-                <div className="card w-screen lg:w-1/2 h-screen bg-base-100/70 backdrop-blur-xl shadow-xl">
+                <div className="card w-screen lg:w-1/2 h-screen bg-info/10 backdrop-blur-xl shadow-2xl">
                     <div className="modal-action">
                         <label htmlFor="my_modal_6" className="btn btn-outline btn-circle"><IconX /></label>
                     </div>
-                    <div className="card-body items-center text-center overflow-y-auto">
+                    <div className="w-full flex justify-center">
                         <h2 className="card-title">{user.user.name}</h2>
-                        <div className="w-full overflow-y-auto">
+                    </div>
+                    <div className="flex flex-col overflow-y-auto h-screen">
+                        <div className="flex-grow overflow-y-auto px-4 py-2">
                             <Chats user={user.user} />
                         </div>
-                        <p></p>
-                        <div className="card-actions">
-                            <div className="form-control">
-                                <div className="input-group">
-                                    <input type="text" placeholder="text..." className="input input-lg input-bordered" value={msg} onChange={(e) => setMsg(e.currentTarget.value)} />
-                                    <button className="btn btn-outline btn-square btn-lg" onClick={() => mutate(msg)}>
-                                        <IconSend />
-                                    </button>
-                                    <button className="btn btn-outline btn-square btn-lg" >
-                                        <input type="file" accept="images/*" className="opacity-0 absolute btn-square" onChange={(e) => sendPhoto(e.target.files)} />
-                                        <IconPhoto />
-                                    </button>
-                                </div>
+                        <div className="flex items-center justify-center border-t mb-2 border-gray-500/30 p-4">
+                            <div className="join">
+                                <input className="w-52 input input-md lg:input-lg rounded-full bg-gray-500/20 join-item" placeholder="message..." value={msg} onChange={(e) => setMsg(e.currentTarget.value)} />
+                                <button className="btn join-item btn-md lg:btn-lg btn-outline rounded-r-full" onClick={() => mutate(msg)}><IconSend /></button>
+                                <button className="btn btn-md lg:btn-lg join-item btn-outline rounded-r-full">
+                                    <input type="file" accept="images/*" className="opacity-0 absolute btn-square" onChange={(e) => sendPhoto(e.target.files)} />
+                                    <IconPhoto />
+                                </button>
                             </div>
                         </div>
                     </div>

@@ -62,7 +62,7 @@ export const SignIn = () => {
   }
 
   return (
-    <div className="h-screen flex bg-gradient-to-t from-[#202C32] to-[#101619]">
+    <div className="h-screen flex">
       <Toaster />
       <div className=" w-full flex lg:w-1/2 justify-center items-center">
         <form onSubmit={async (e) => { mutate(e) }

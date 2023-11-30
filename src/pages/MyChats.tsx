@@ -6,6 +6,8 @@ import { useState } from "react";
 import { Database } from "../lib/database.types";
 import { ChatBox } from "../components/ChatBox";
 import { UnauthorizaError } from "./UnauthorizaError";
+import { TopBar } from "../components/TopBar";
+import { Loading } from "../components/Loading";
 
 type User = Database["public"]["Tables"]["users"]["Row"] | null;
 
@@ -20,23 +22,24 @@ export const MyChats = () => {
         queryFn: () => getRecentChats(),
     })
     if (isLoading) {
-        return <div className="h-screen bg-gradient-to-t from-[#202C32] to-[#101619] flex mx-auto justify-center"><span className="loading loading-dots loading-lg"></span></div>
+        return <Loading />
     }
     if (!userSession) {
         return <UnauthorizaError />
     }
     return (
         <>
-            <div className="bg-gradient-to-t from-[#202C32] to-[#101619] min-h-screen flex items-center justify-center px-16">
-                <div className="relative w-full max-w-lg border border-gray-50/10 rounded">
-                    <div className="m-8 relative space-y-4">
+            <TopBar />
+            <div className="flex flex-col items-center justify-center min-h-screen">
+                <div className="w-full md:w-3/4 lg:w-1/2 xl:w-1/3 rounded-lg border border-gray-50/10  shadow-lg p-4">
+                    <div className="overflow-y-auto max-h-60 md:max-h-80 lg:max-h-96 xl:max-h-80 w-full rounded-lg p-2">
                         {isSuccess && users && (
                             <div>
                                 {users.map((user) => (
-                                    <div key={user.users?.id} className="p-5 bg-transparent rounded-lg flex items-center justify-between space-x-8">
+                                    <div key={user.id} className="p-5 bg-transparent rounded-lg flex items-center justify-between space-x-8">
                                         <div className="flex-1 flex justify-between items-center">
                                             <div className="h-4 w-48 text-lg capitalize rounded">{user.users?.name}</div>
-                                            <label htmlFor="my_modal_6" className="btn btn-circle btn-outline" onClick={async () => setOtherUser(user.users)}><IconMessage /></label>
+                                            <label htmlFor="my_modal_6" className="btn btn-circle btn-outline hover:scale-110" onClick={async () => setOtherUser(user.users)}><IconMessage /></label>
                                         </div>
                                     </div>
                                 ))}

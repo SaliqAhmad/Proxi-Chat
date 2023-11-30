@@ -52,7 +52,7 @@ export const SignUp = () => {
 
     return (
 
-        <div className="h-screen flex bg-gradient-to-t from-[#202C32] to-[#101619]">
+        <div className="h-screen flex">
             <Toaster />
             <div className="hidden lg:flex w-1/2 justify-center items-center">
                 <div>
