@@ -35,7 +35,7 @@ export const Chat = () => {
             <TopBar />
             <div className="flex flex-col items-center justify-center min-h-screen">
                 <div className="w-full md:w-3/4 lg:w-1/2 xl:w-1/3 rounded-lg border border-gray-50/10  shadow-lg p-4">
-                    <h1 className="text-2xl font-bold mb-4 text-center">User on Location: {usersOnLocation?.length}</h1>
+                    <h1 className="text-2xl font-bold mb-4 text-center">Users on Location: {usersOnLocation?.length}</h1>
                     <div className="overflow-y-auto max-h-60 md:max-h-80 lg:max-h-96 xl:max-h-80 w-full rounded-lg p-2">
                         {isSuccess && usersOnLocation && (
                             <div>

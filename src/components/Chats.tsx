@@ -41,7 +41,7 @@ export const Chats = (user: Props) => {
             queryFn: async () => getMedia(path.path),
             queryKey: ["img", user.user.id],
         })
-        return <img src={media} alt="..." />
+        return <img src={media} className="w-[650px] rounded-xl" alt="..." />
     }
 
     useEffect(() => {
