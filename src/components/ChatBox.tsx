@@ -21,7 +21,7 @@ export const ChatBox = (user: Props) => {
         mutationKey: ["sendMsgs"],
     });
 
-    const { mutate: sendPhoto } = useMutation({
+    const { mutate: sendPhoto, isSuccess: photoSend } = useMutation({
         mutationFn: (msg: FileList | null) => sendMedia(user.user.id, msg),
         mutationKey: ["sendMedia"],
     });
@@ -31,8 +31,11 @@ export const ChatBox = (user: Props) => {
             queryClient.invalidateQueries(["chats", user.user.id]);
             setMsg("");
         }
+        if (photoSend) {
+            queryClient.invalidateQueries(["chats", user.user.id]);
+        }
     }
-        , [isSuccess, queryClient, user.user.id]);
+        , [isSuccess, queryClient, user.user.id, photoSend]);
 
     return (
         <>

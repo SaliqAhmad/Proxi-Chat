@@ -9,7 +9,7 @@ import { delGroup, leaveGroup } from "../backend/handlegroup";
 
 type Groupdet = Database["public"]["Tables"]["groups"]["Row"];
 type Group = {
-    group: Groupdet | undefined
+    group: Groupdet | undefined;
 }
 
 
@@ -29,6 +29,7 @@ export const GroupChatBox = (props: Group) => {
     })
 
     const { mutate: sendPhoto, isSuccess: sendMedia } = useMutation({
+        mutationKey: "sendGroupMedia",
         mutationFn: (img: FileList | null) => sendGroupMedia(props.group?.id, img)
     })
     const { mutate: delgroup, isSuccess: delgrp } = useMutation({

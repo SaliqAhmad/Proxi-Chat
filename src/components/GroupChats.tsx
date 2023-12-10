@@ -7,8 +7,32 @@ import { useEffect } from "react";
 
 type Group = Database["public"]["Tables"]["groups"]["Row"];
 type Props = {
-    group: Group | undefined
+    group: Group | undefined;
 }
+
+type MediaProps = {
+    path: string;
+}
+
+const Media = (path: MediaProps) => {
+    const queryClient = useQueryClient();
+    const { data: media, isLoading, isSuccess } = useQuery({
+        queryFn: async () => getGroupMedia(path.path),
+        queryKey: [`gImg-${path.path}`],
+    })
+    useEffect(() => {
+        if (isSuccess) {
+            queryClient.invalidateQueries(["groupChats"]);
+        }
+    }, [isSuccess, queryClient, path.path]);
+
+    if (isLoading) {
+        return <span className="loading loading-dots loading-md"></span>
+    }
+
+    return <img src={media} className="w-[650px] rounded-xl" alt="..." />
+}
+
 
 export const GroupChats = (props: Props) => {
 
@@ -20,7 +44,7 @@ export const GroupChats = (props: Props) => {
     })
 
     const { data: chats, isLoading: chatsLoading } = useQuery({
-        queryFn: () => getGroupChats(props.group?.id),
+        queryFn: async () => getGroupChats(props.group?.id),
         queryKey: ["groupChats", props.group?.id],
     })
 
@@ -28,18 +52,6 @@ export const GroupChats = (props: Props) => {
         mutationFn: (chatId: string) => deleteGroupMsg(props.group?.id, chatId),
         mutationKey: ["deleteGroupChat"],
     })
-
-    type MediaProps = {
-        path: string;
-    }
-
-    const Media = (path: MediaProps) => {
-        const { data: media } = useQuery({
-            queryFn: async () => getGroupMedia(path.path),
-            queryKey: ["groupimg", props.group?.id],
-        })
-        return <img src={media} className="w-[650px] rounded-xl" alt="..." />
-    }
 
     useEffect(() => {
         if (isSuccess) {
@@ -54,7 +66,7 @@ export const GroupChats = (props: Props) => {
                     <div className={`chat ${chat.sender === CurrUser?.user.id ? "chat-end" : "chat-start"} mt-2`} key={chat.id}>
                         {chatsLoading ? <span className="loading loading-dots loading-md"></span> : <>
                             {chat.isImg && <p><Media path={chat.message} /></p>}
-                            {!chat.isImg && <div className={`chat-bubble ${chat.sender === CurrUser?.user.id ? "chat-bubble-info" : "chat-bubble-success"}`}>{chat.message}</div>}
+                            {chat.isImg && <div className={`chat-bubble ${chat.sender === CurrUser?.user.id ? "chat-bubble-info" : "chat-bubble-success"}`}>{chat.message}</div>}
                             {chat.sender !== CurrUser?.user.id && <div className="chat-footer mt-2 opacity-50">
                                 {chat.sendername}
                             </div>}

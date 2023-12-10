@@ -43,7 +43,7 @@ export const delMsgs = async (msgId: string, msg: string, isImg: boolean) => {
         const { error } = await supabase
             .storage
             .from("media")
-            .remove(["/" + msg]);
+            .remove([msg]);
         if (error) {
             return toast.error("Error deleting message");
         }

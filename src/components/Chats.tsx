@@ -12,6 +12,30 @@ type Props = {
     user: User;
 }
 
+type MediaProps = {
+    path: string;
+}
+
+const Media = (props: MediaProps) => {
+    const queryClient = useQueryClient();
+    const { data: media, isLoading, isSuccess } = useQuery({
+        queryFn: async () => getMedia(props.path),
+        queryKey: [`img-${props.path}`],
+    })
+    useEffect(() => {
+        if (isSuccess) {
+            queryClient.invalidateQueries(["chats"]);
+        }
+    }, [isSuccess, queryClient, props.path]);
+
+    if (isLoading) {
+        return <span className="loading loading-dots loading-md"></span>
+    }
+
+    return <img src={media} className="w-[650px] rounded-xl" alt="..." />
+}
+
+
 export const Chats = (user: Props) => {
     const queryClient = useQueryClient();
 
@@ -31,18 +55,6 @@ export const Chats = (user: Props) => {
         mutationFn: (props: DelMsgsProps) => delMsgs(props.msgid, props.message, props.isImg),
         mutationKey: ["delMsgs"],
     });
-
-    type MediaProps = {
-        path: string;
-    }
-
-    const Media = (path: MediaProps) => {
-        const { data: media } = useQuery({
-            queryFn: async () => getMedia(path.path),
-            queryKey: ["img", user.user.id],
-        })
-        return <img src={media} className="w-[650px] rounded-xl" alt="..." />
-    }
 
     useEffect(() => {
         if (isSuccess) {
