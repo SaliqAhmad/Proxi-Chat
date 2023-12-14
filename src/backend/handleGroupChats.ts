@@ -51,11 +51,21 @@ export const sendGroupChat = async (groupId: string | undefined, message: string
     return data;
 };
 
-export const deleteGroupMsg = async (groupId: string | undefined, msgId: string) => {
+export const deleteGroupMsg = async (groupId: string | undefined, chatid: string, msg: string, isImg: boolean) => {
+    if (!groupId) return;
+    if (isImg) {
+        const { error } = await supabase
+            .storage
+            .from("groupmedia")
+            .remove([msg]);
+        if (error) {
+            return toast.error("Error deleting message");
+        }
+    }
     const { data, error } = await supabase
         .from("groupmessages")
         .delete()
-        .match({ id: msgId, groupid: groupId });
+        .match({ id: chatid, groupid: groupId });
 
     if (error) {
         throw error;

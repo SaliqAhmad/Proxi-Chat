@@ -24,13 +24,12 @@ export const GroupChatBox = (props: Group) => {
     });
     const { mutate, isSuccess } = useMutation({
         mutationFn: (msg: string) => sendGroupChat(props.group?.id, msg),
-        mutationKey: ["sendGrouupMsgs"],
-        onSuccess: () => setMsg("")
+        mutationKey: ["sendGroupMsgs"],
     })
 
-    const { mutate: sendPhoto, isSuccess: sendMedia } = useMutation({
-        mutationKey: "sendGroupMedia",
-        mutationFn: (img: FileList | null) => sendGroupMedia(props.group?.id, img)
+    const { mutate: sendGrpPhoto, isSuccess: sendMedia } = useMutation({
+        mutationFn: (img: FileList | null) => sendGroupMedia(props.group?.id, img),
+        mutationKey: ["sendGroupMedia"],
     })
     const { mutate: delgroup, isSuccess: delgrp } = useMutation({
         mutationKey: "deletegroup",
@@ -48,6 +47,7 @@ export const GroupChatBox = (props: Group) => {
     useEffect(() => {
         if (isSuccess) {
             queryClient.invalidateQueries(["groupChats", props.group?.id])
+            setMsg("");
         }
         if (sendMedia) {
             queryClient.invalidateQueries(["groupChats", props.group?.id])
@@ -81,12 +81,12 @@ export const GroupChatBox = (props: Group) => {
                     </div>
                     <div className="flex flex-col overflow-y-auto h-screen">
                         <div className="flex-grow overflow-y-auto px-4 py-2">
-                            {isLoading ? <span className="loading loading-spinner loading-lg mt-96"></span> :
+                            {isLoading ? <span className="loading loading-spinner loading-lg flex mx-auto mt-96"></span> :
                                 <>
                                     {isPresent ? <GroupChats group={props.group} /> :
                                         <div className="card w-96 bg-error text-error-content flex mx-auto mt-96">
                                             <div className="card-body">
-                                                <h2 className="card-title">You are notmember of this group</h2>
+                                                <h2 className="card-title">You are not member of this group</h2>
                                             </div>
                                         </div>
                                     }
@@ -98,7 +98,7 @@ export const GroupChatBox = (props: Group) => {
                                 <input className="w-52 input input-md lg:input-lg rounded-full bg-gray-500/20 join-item" placeholder="message..." value={msg} onChange={(e) => setMsg(e.currentTarget.value)} />
                                 <button className="btn join-item btn-md lg:btn-lg btn-outline rounded-r-full" onClick={() => mutate(msg)}><IconSend /></button>
                                 <button className="btn btn-md lg:btn-lg join-item btn-outline rounded-r-full">
-                                    <input type="file" accept="images/*" className="opacity-0 absolute btn-square" onChange={(e) => sendPhoto(e.target.files)} />
+                                    <input type="file" accept="images/*" className="opacity-0 absolute btn-square" onChange={(e) => sendGrpPhoto(e.target.files)} />
                                     <IconPhoto />
                                 </button>
                             </div>
