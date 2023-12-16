@@ -90,7 +90,7 @@ export const sendGroupMedia = async (groupId: string | undefined, fileList: File
         return null;
     }
     if (data.path === null) return null;
-    sendGroupChat(groupId, data.path, true);
+    await sendGroupChat(groupId, data.path, true);
 }
 
 export const getGroupMedia = (path: string) => {

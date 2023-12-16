@@ -24,7 +24,7 @@ const Media = (path: MediaProps) => {
         if (isSuccess) {
             queryClient.invalidateQueries(["groupChats"]);
         }
-    }, [isSuccess, queryClient]);
+    }, [isSuccess, queryClient, path.path]);
 
     if (isLoading) {
         return <span className="loading loading-dots loading-md"></span>
