@@ -63,6 +63,8 @@ export const Chats = (user: Props) => {
     }
         , [isSuccess, queryClient, user.user.id]);
 
+    if (chatsLoading) return <span className="loading loading-spinner loading-lg flex mx-auto mt-96"></span>;
+
     return (
         <div className="w-full">
             {chats?.map((chat) => (
