@@ -72,7 +72,7 @@ export const sendMedia = async (receiverId: string, fileList: FileList | null) =
         return null;
     }
     if (data.path === null) return null;
-    sendMsgs(receiverId, data.path, true);
+    await sendMsgs(receiverId, data.path, true);
 }
 
 export const getMedia = (path: string) => {
