@@ -1,9 +1,32 @@
 import { getUserSession, handleUserSignOut } from "../backend/handleUser"
 import { useMutation, useQuery } from "react-query"
-import { NavLink, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { UnauthorizaError } from "../pages/UnauthorizaError"
+import { ModeToggle } from "./mode-toggle"
+import { Link } from "react-router-dom"
+import { Button } from "./ui/button"
+import { Badge } from "./ui/badge"
+import {
+    Menubar,
+    MenubarMenu,
+    MenubarTrigger,
+} from "@/components/ui/menubar"
 
-export const TopBar = () => {
+import {
+    Drawer,
+    DrawerClose,
+    DrawerContent,
+    DrawerDescription,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerTrigger,
+} from "@/components/ui/drawer"
+import { Menu, X } from "lucide-react"
+
+
+
+export function TopBar() {
     const navigate = useNavigate();
     const { data: userSession } = useQuery({
         queryFn: getUserSession,
@@ -13,7 +36,7 @@ export const TopBar = () => {
         mutationFn: handleUserSignOut,
         mutationKey: ["handleUserSignOut"],
         onSuccess: () => {
-            navigate("/signin");
+            navigate("/");
         }
     });
     if (!userSession) {
@@ -21,33 +44,41 @@ export const TopBar = () => {
     }
 
     return (
-        <>
-            <div className="navbar fixed mt-5">
-                <div className="navbar-start">
-                    <div className="dropdown">
-                        <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
-                        </div>
-                        <ul className="menu menu-sm dropdown-content mt-3 z-[1] p-2 bg-info/10 backdrop-blur-xl shadow-2xl rounded-box w-52">
-                            <NavLink to="/chat" className="btn btn-ghost text-md">CHAT</NavLink>
-                            <NavLink to="/groupchat" className="btn btn-ghost text-md">GROUP CHAT</NavLink>
-                            <NavLink to="/mychats" className="btn btn-ghost text-md">MY CHATS</NavLink>
-                        </ul>
-                    </div>
-                    <a className="btn btn-ghost hidden lg:block text-xl">Proxi</a>
-                </div>
-                <div className="navbar-center hidden lg:flex">
-                    <ul className="menu menu-horizontal px-1">
-                        <NavLink to="/chat" className="btn btn-ghost text-xl">CHAT</NavLink>
-                        <NavLink to="/groupchat" className="btn btn-ghost text-xl">GROUP CHAT</NavLink>
-                        <NavLink to="/mychats" className="btn btn-ghost text-xl">MY CHATS</NavLink>
-                    </ul>
-                </div>
-                <div className="navbar-end">
-                    <button className="btn btn-ghost text-xl" onClick={() => mutate()}>LOG-OUT<div className="badge badge-outline">{userSession.user.user_metadata.name}</div></button>
-                </div>
+        <div className="flex justify-center">
+            <Menubar className="hidden lg:flex">
+                <MenubarMenu>
+                    <MenubarTrigger><Link to="/chat">CHAT</Link></MenubarTrigger>
+                </MenubarMenu>
+                <MenubarMenu>
+                    <MenubarTrigger><Link to="/groupchat">GROUP CHAT</Link></MenubarTrigger>
+                </MenubarMenu>
+                <MenubarMenu>
+                    <MenubarTrigger><Link to="/mychats">MY CHATS</Link></MenubarTrigger>
+                </MenubarMenu>
+                <MenubarMenu>
+                    <Button variant='ghost' onClick={() => mutate()}>LOG-OUT</Button>
+                    <Badge variant='default' > as {userSession.user.user_metadata.fullName}</Badge>
+                </MenubarMenu>
+                <MenubarMenu>
+                    <ModeToggle />
+                </MenubarMenu>
+            </Menubar>
+            <div className="lg:hidden">
+                <Drawer>
+                    <DrawerTrigger><Menu size={40} className="mt-4" /></DrawerTrigger>
+                    <DrawerContent className="top-0 mt-0">
+                        <DrawerHeader>
+                            <DrawerTitle>Are you sure absolutely sure?</DrawerTitle>
+                            <DrawerDescription>This action cannot be undone.</DrawerDescription>
+                        </DrawerHeader>
+                        <DrawerFooter>
+                            <DrawerClose>
+                                <Button variant="default" size={"icon"} ><X /></Button>
+                            </DrawerClose>
+                        </DrawerFooter>
+                    </DrawerContent>
+                </Drawer>
             </div>
-
-        </>
+        </div>
     )
 }

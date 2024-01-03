@@ -38,7 +38,7 @@ export const sendGroupChat = async (groupId: string | undefined, message: string
             {
                 sender: currUser.user.id,
                 groupid: groupId,
-                sendername: currUser.user.user_metadata.name,
+                sendername: currUser.user.user_metadata.fullName,
                 message: message,
                 isImg
             }
@@ -101,14 +101,13 @@ export const getGroupMedia = (path: string) => {
 export const checkIfGroupMember = async (groupId: string | undefined) => {
     const currUser = (await supabase.auth.getUser()).data;
     if (!currUser.user) return;
-    if (!groupId) return;
     const { data: isPresent, error: groupError } = await supabase
         .from("groupmembers")
         .select("*")
         .match({ groupid: groupId, userid: currUser.user.id });
     if (groupError) throw groupError;
-    if (isPresent.length === 0) {
-        return false;
-    }
+    console.log(isPresent);
+    if (isPresent.length === 0) return false;
+    console.log(isPresent);
     return true;
 }

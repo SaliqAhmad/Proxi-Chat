@@ -43,7 +43,7 @@ export const getAllGroups = async () => {
     return data;
 }
 
-export const delGroup = async (groupId: string | undefined) => {
+export const delGroup = async (groupId: string) => {
     if (!groupId) return;
     const groupadmin = (await supabase.auth.getUser()).data.user?.id;
     if (!groupadmin) {

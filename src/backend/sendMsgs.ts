@@ -2,9 +2,10 @@ import toast from "react-hot-toast";
 import { supabase } from "../supabaseClient";
 import { v4 as uuidv4 } from "uuid";
 
-export const sendMsgs = async (receiverId: string, msg: string, isImg = false) => {
+export const sendMsgs = async (receiverId: string | undefined, msg: string, isImg = false) => {
     const senderId = (await supabase.auth.getUser()).data.user?.id;
     if (!senderId) return;
+    if (!receiverId) return;
     if (msg === "") return;
     const { error } = await supabase
         .from("chats")
@@ -57,7 +58,7 @@ export const delMsgs = async (msgId: string, msg: string, isImg: boolean) => {
     }
 }
 
-export const sendMedia = async (receiverId: string, fileList: FileList | null) => {
+export const sendMedia = async (receiverId: string | undefined, fileList: FileList | null) => {
     const senderId = (await supabase.auth.getUser()).data.user?.id;
     const file = fileList?.item(0);
     if (!file) return;

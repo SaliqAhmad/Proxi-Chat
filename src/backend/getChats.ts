@@ -1,7 +1,7 @@
 import { supabase } from "../supabaseClient";
 import { getUserSession } from "./handleUser";
 
-export const getChats = async (otherUserId: string) => {
+export const getChats = async (otherUserId: string | undefined) => {
     const currentUser = await getUserSession();
     if (!currentUser) return;
     const { data: chats, error } = await supabase

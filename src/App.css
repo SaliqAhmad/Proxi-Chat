@@ -1,5 +1,9 @@
-.App {
-    background: url('./assets/SimpleShiny.svg');
-    background-repeat: no-repeat;
-    background-size: cover;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.App{
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
 }
